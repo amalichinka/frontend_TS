@@ -43,20 +43,18 @@ Bonus:
  * @param {Array} input
  * @return {Array | Function}
  */
-export function map(mapper, input) {
+export function map<T, R>(mapper: (item: T) => R): ((input: T[]) => R[]) | Function {
     if (arguments.length === 0) {
         return map;
     }
     if (arguments.length === 1) {
-        return function subFunction(subInput) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
+        return function subFunction(subInput: T[]): R[] {
             return subInput.map(mapper);
         };
     }
-    return input.map(mapper);
+    return (input: T[]) => input.map(mapper);
 }
+
 
 /**
  * 2 arguments passed: returns a new array
@@ -74,20 +72,18 @@ export function map(mapper, input) {
  * @param {Array} input
  * @return {Array | Function}
  */
-export function filter(filterer, input) {
+export function filter<T>(filterer: (item: T) => boolean): ((input: T[]) => T[]) | Function {
     if (arguments.length === 0) {
         return filter;
     }
     if (arguments.length === 1) {
-        return function subFunction(subInput) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
+        return function subFunction(subInput: T[]): T[] {
             return subInput.filter(filterer);
         };
     }
-    return input.filter(filterer);
+    return (input: T[]) => input.filter(filterer);
 }
+
 
 /**
  * 3 arguments passed: reduces input array it using the
@@ -117,35 +113,25 @@ export function filter(filterer, input) {
  * @param {Array} input
  * @return {* | Function}
  */
-export function reduce(reducer, initialValue, input) {
+export function reduce<T, R>(
+    reducer: (accumulator: R, currentValue: T) => R,
+    initialValue: R,
+    input?: T[]
+): R | Function {
     if (arguments.length === 0) {
         return reduce;
     }
     if (arguments.length === 1) {
-        return function subFunction(subInitialValue, subInput) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
-            if (arguments.length === 1) {
-                return function subSubFunction(subSubInput) {
-                    if (arguments.length === 0) {
-                        return subSubFunction;
-                    }
-                    return subSubInput.reduce(reducer, subInitialValue);
-                };
-            }
-            return subInput.reduce(reducer,subInitialValue);
-        }
+        return function subFunction(subInitialValue: R, subInput: T[]): R {
+            return subInput.reduce(reducer, subInitialValue);
+        };
     }
     if (arguments.length === 2) {
-        return function subFunction(subInput) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
+        return function subFunction(subInput: T[]): R {
             return subInput.reduce(reducer, initialValue);
         };
     }
-    return input.reduce(reducer, initialValue);
+    return input!.reduce(reducer, initialValue);
 }
 
 /**
@@ -160,19 +146,16 @@ export function reduce(reducer, initialValue, input) {
  * @param {Number} b
  * @return {Number | Function}
  */
-export function add(a, b) {
+export function add(a: number, b?: number): number | ((b: number) => number) | Function {
     if (arguments.length === 0) {
         return add;
     }
     if (arguments.length === 1) {
-        return function subFunction(subB) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
+        return function subFunction(subB: number): number {
             return a + subB;
         };
     }
-    return a + b;
+    return a + b!;
 }
 
 /**
@@ -188,20 +171,19 @@ export function add(a, b) {
  * @param {Number} b
  * @return {Number | Function}
  */
-export function subtract(a, b) {
+
+export function subtract(a: number, b?: number): number | ((b: number) => number) | Function {
     if (arguments.length === 0) {
         return subtract;
     }
     if (arguments.length === 1) {
-        return function subFunction(subB) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
+        return function subFunction(subB: number): number {
             return a - subB;
         };
     }
-    return a - b;
+    return a - b!;
 }
+
 
 /**
  * 2 arguments passed: returns value of property
@@ -217,20 +199,18 @@ export function subtract(a, b) {
  * @param {String} propName
  * @return {* | Function}
  */
-export function prop(obj, propName) {
+export function prop<T>(obj: T, propName?: keyof T): ((propName: keyof T) => T[keyof T]) | T[keyof T] | Function {
     if (arguments.length === 0) {
         return prop;
     }
     if (arguments.length === 1) {
-        return function subFunction(subPropName) {
-            if (arguments.length === 0) {
-                return subFunction;
-            }
+        return function subFunction(subPropName: keyof T): T[keyof T] {
             return obj[subPropName];
         };
     }
-    return obj[propName];
+    return obj[propName!];
 }
+
 
 /**
  * >0 arguments passed: expects each argument to be
@@ -253,17 +233,20 @@ export function prop(obj, propName) {
  * @param {Function[]} functions
  * @return {*}
  */
-export function pipe(...functions) {
+export function pipe<T, R>(
+    ...functions: Array<(input: T) => R>
+): (input: T) => R {
     if (arguments.length === 0) {
         return pipe;
     }
-    return function subFunction() {
-        let nextArguments = Array.from(arguments);
-        let result;
-        for (const func of functions) {
-            result = func(...nextArguments);
-            nextArguments = [result];
+
+    return function subFunction(input: T): R {
+        let result: R = functions[0](input);
+        for (let i = 1; i < functions.length; i++) {
+            result = functions[i](result);
         }
         return result;
     };
 }
+
+
