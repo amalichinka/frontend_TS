@@ -82,23 +82,10 @@ function logPerson(person: Person, index: number) {
     );
 }
 
-export {
-    dateWizard
-};
-
 console.log('All users:');
 
 ([] as Person[])
     .concat(users, admins)
-    .forEach(logPerson);
-
-console.log();
-
-console.log('Early birds:');
-
-([] as Person[])
-    .concat(users, admins)
-    .filter((person) => dateWizard.dateDetails(person.registered).hours < 10)
     .forEach(logPerson);
 
 // In case you are stuck:

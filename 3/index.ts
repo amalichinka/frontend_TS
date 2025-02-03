@@ -53,14 +53,13 @@ export const persons: Person[] = [
     }
 ];
 
-export function logPerson(person: Person) {
-    let additionalInformation: string;
-    if (person.role) {
-        additionalInformation = person.role;
+export function logPerson(person: Person): void {
+    const baseInfo = ` - ${person.name}, ${person.age}`;
+    if ('occupation' in person) {
+        console.log(`${baseInfo}, occupation: ${person.occupation}`);
     } else {
-        additionalInformation = person.occupation;
+        console.log(`${baseInfo}, role: ${person.role}`);
     }
-    console.log(` - ${person.name}, ${person.age}, ${additionalInformation}`);
 }
 
 persons.forEach(logPerson);

@@ -14,7 +14,6 @@ Exercise:
     this situation and apply necessary fixes.
 
 */
-
 interface User {
     type: 'user';
     name: string;
@@ -38,11 +37,11 @@ export const persons: Person[] = [
     { type: 'admin', name: 'Bruce Willis', age: 64, role: 'World saver' }
 ];
 
-export function isAdmin(person: Person) {
+export function isAdmin(person: Person): person is Admin {
     return person.type === 'admin';
 }
 
-export function isUser(person: Person) {
+export function isUser(person: Person): person is User {
     return person.type === 'user';
 }
 
@@ -50,8 +49,7 @@ export function logPerson(person: Person) {
     let additionalInformation: string = '';
     if (isAdmin(person)) {
         additionalInformation = person.role;
-    }
-    if (isUser(person)) {
+    } else if (isUser(person)) {
         additionalInformation = person.occupation;
     }
     console.log(` - ${person.name}, ${person.age}, ${additionalInformation}`);

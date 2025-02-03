@@ -33,9 +33,13 @@ Exercise:
 
 */
 
-export type User = unknown
+export interface User {
+    name: string;
+    age: number;
+    occupation: string;
+}
 
-export const users: unknown[] = [
+export const users: User[] = [
     {
         name: 'Max Mustermann',
         age: 25,
@@ -48,13 +52,12 @@ export const users: unknown[] = [
     }
 ];
 
-export function logPerson(user: unknown) {
+export function logPerson(user: User): void {
     console.log(` - ${user.name}, ${user.age}`);
 }
 
 console.log('Users:');
 users.forEach(logPerson);
-
 
 // In case you are stuck:
 // https://www.typescriptlang.org/docs/handbook/2/objects.html

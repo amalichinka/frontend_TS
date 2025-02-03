@@ -18,13 +18,13 @@ Intro:
     Jeff says that we need to do some statistics and
     analytics.
 
-    We've ran a questionnaire within the team to
+    We've run a questionnaire within the team to
     figure out what do we know about statistics.
     The only person who filled it was our coffee
     machine maintainer. The answers were:
 
      * Maximums
-     * Minumums
+     * Minimums
      * Medians
      * Averages
 

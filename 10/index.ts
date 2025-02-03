@@ -70,10 +70,19 @@ export type ApiResponse<T> = (
         status: 'error';
         error: string;
     }
-);
+    );
 
-export function promisify(arg: unknown): unknown {
-    return null;
+export function promisify<T>(fn: (callback: (response: ApiResponse<T>) => void) => void): () => Promise<T> {
+    return () =>
+        new Promise<T>((resolve, reject) => {
+            fn((response: ApiResponse<T>) => {
+                if (response.status === 'success') {
+                    resolve(response.data);
+                } else {
+                    reject(new Error(response.error));
+                }
+            });
+        });
 }
 
 const oldApi = {
@@ -117,20 +126,28 @@ function logPerson(person: Person) {
 }
 
 async function startTheApp() {
-    console.log('Admins:');
-    (await api.requestAdmins()).forEach(logPerson);
-    console.log();
+    try {
+        console.log('Admins:');
+        const adminsList = await api.requestAdmins();
+        adminsList.forEach(logPerson);
+        console.log();
 
-    console.log('Users:');
-    (await api.requestUsers()).forEach(logPerson);
-    console.log();
+        console.log('Users:');
+        const usersList = await api.requestUsers();
+        usersList.forEach(logPerson);
+        console.log();
 
-    console.log('Server time:');
-    console.log(`   ${new Date(await api.requestCurrentServerTime()).toLocaleString()}`);
-    console.log();
+        console.log('Server time:');
+        const serverTime = await api.requestCurrentServerTime();
+        console.log(`   ${new Date(serverTime).toLocaleString()}`);
+        console.log();
 
-    console.log('Coffee machine queue length:');
-    console.log(`   ${await api.requestCoffeeMachineQueueLength()}`);
+        console.log('Coffee machine queue length:');
+        const queueLength = await api.requestCoffeeMachineQueueLength();
+        console.log(`   ${queueLength}`);
+    } catch (e) {
+        console.log(`Error: "${e.message}", but it's fine, sometimes errors are inevitable.`);
+    }
 }
 
 startTheApp().then(
